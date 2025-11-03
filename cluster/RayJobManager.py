@@ -6,16 +6,17 @@ class RayJobManager:
         self.ray_address = ray_address
         self.client = JobSubmissionClient(ray_address)
 
-    def submit_job(self, entrypoint: str, pip_packages=None) -> str:
+    def submit_job(self, entrypoint: str, runtime_env=None) -> str:
         """
         Submit a Ray job and return the job ID.
         """
-        if pip_packages is None:
-            pip_packages = []
+        if runtime_env is None:
+            runtime_env = {}
 
         job_id = self.client.submit_job(
             entrypoint=entrypoint,
-            runtime_env={"pip": pip_packages},
+            runtime_env=runtime_env,
+            entrypoint_num_gpus=2,
         )
         print(f"Submitted Ray job: {job_id}")
         return job_id

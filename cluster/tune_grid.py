@@ -16,6 +16,6 @@ search_space = {
 tuner = tune.Tuner(
     trainable,
     param_space=search_space,
-    tune_config=tune.TuneConfig(metric="val_loss", mode="min", num_samples=20),
+    tune_config=tune.TuneConfig(metric="val_loss", mode="min", num_samples=120),
 )
 tuner.fit()
