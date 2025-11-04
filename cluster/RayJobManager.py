@@ -16,7 +16,7 @@ class RayJobManager:
         job_id = self.client.submit_job(
             entrypoint=entrypoint,
             runtime_env=runtime_env,
-            entrypoint_num_gpus=2,
+            #entrypoint_num_gpus=2,
         )
         print(f"Submitted Ray job: {job_id}")
         return job_id

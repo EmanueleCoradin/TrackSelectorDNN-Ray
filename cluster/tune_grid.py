@@ -6,16 +6,26 @@ base_cfg = load_config("base.yaml").model_dump()
 
 search_space = {
     **base_cfg,  # include all validated defaults
-    "lr": tune.loguniform(1e-4, 1e-2),
-    "latent_dim": tune.choice([8, 16, 32]),
+    "lr": tune.loguniform(1e-5, 1e-2),
+    "weight_decay": tune.loguniform(1e-5, 1e-2),
+    "latent_dim": tune.choice([16, 32, 64]),
     "pooling_type": tune.choice(["sum", "mean", "softmax"]),
-    "netA_hidden_layers": tune.choice([1, 2, 3]),
-    "netB_hidden_layers": tune.choice([1, 2, 3]),
+    "netA_hidden_layers": tune.choice([1, 2, 3, 4, 5]),
+    "netB_hidden_layers": tune.choice([1, 2, 3, 4, 5]),
 }
 
 tuner = tune.Tuner(
     trainable,
     param_space=search_space,
-    tune_config=tune.TuneConfig(metric="val_loss", mode="min", num_samples=120),
+    tune_config=tune.TuneConfig(metric="val_loss", mode="min", num_samples=1),
 )
-tuner.fit()
+
+results = tuner.fit()
+
+best_result = results.get_best_result(metric="val_loss", mode="min")
+
+print("Best config found:")
+print(best_result.config)
+
+best_ckpt_dir = best_result.checkpoint
+print("Best checkpoint path:", best_ckpt_dir)
