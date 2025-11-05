@@ -31,7 +31,7 @@ class RayJobManager:
             print(f"Job status: {status}")
             if status in {JobStatus.SUCCEEDED, JobStatus.STOPPED, JobStatus.FAILED}:
                 break
-            time.sleep(10)
+            time.sleep(120)
         else:
             print("⚠️ Timeout waiting for job.")
             return
