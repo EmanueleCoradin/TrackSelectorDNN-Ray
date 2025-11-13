@@ -13,7 +13,9 @@ search_space = {
     **base_cfg,  # include all validated defaults
     "lr": tune.loguniform(1e-5, 1e-2),
     "weight_decay": tune.loguniform(1e-5, 1e-2),
-    "latent_dim": tune.choice([16, 32, 64]),
+    "latent_dim": tune.choice([32, 64, 128]),
+    "netA_hidden_dim": tune.choice([32, 64, 128]),
+    "netB_hidden_dim": tune.choice([32, 64, 128]),
     "pooling_type": tune.choice(["sum", "mean", "softmax"]),
     "netA_hidden_layers": tune.choice([1, 2, 3, 4, 5]),
     "netB_hidden_layers": tune.choice([1, 2, 3, 4, 5]),
@@ -26,7 +28,7 @@ run_config = RunConfig(
     storage_path=eos_base,  # logs and experiment metadata
     checkpoint_config=CheckpointConfig(
         checkpoint_score_attribute="val_loss",
-        num_to_keep=1
+        num_to_keep=50
     )
 )
 
