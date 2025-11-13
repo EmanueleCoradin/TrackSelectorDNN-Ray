@@ -21,11 +21,11 @@ search_space = {
     "netB_hidden_layers": tune.choice([1, 2, 3, 4, 5]),
 }
 
-eos_base = "/shared/ray_results"
+ray_storage_path = "/shared/ray_results"
 
 run_config = RunConfig(
     name="track_selector_dnn_tuning",
-    storage_path=eos_base,  # logs and experiment metadata
+    storage_path=ray_storage_path,  # logs and experiment metadata
     checkpoint_config=CheckpointConfig(
         checkpoint_score_attribute="val_loss",
         num_to_keep=50
