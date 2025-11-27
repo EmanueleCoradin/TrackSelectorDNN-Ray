@@ -11,18 +11,24 @@ base_cfg = load_config("base.yaml").model_dump()
 
 search_space = {
     **base_cfg,  # include all validated defaults
-    "epochs": 50,
-    "patience": 10,
+    "epochs": 75,
+    "patience": 15,
     "netB_activation": tune.choice(["relu", "leakyrelu", "silu",]),
     "netA_activation": tune.sample_from(lambda spec: spec.config["netB_activation"]),
     "lr": tune.loguniform(1e-5, 1e-2),
     "weight_decay": tune.loguniform(1e-5, 1e-2),
-    "latent_dim": tune.choice([8, 16, 32]),
-    "netA_hidden_dim": tune.choice([16, 32, 64]),
-    "netB_hidden_dim": tune.choice([16, 32, 64]),
+    "latent_dim": tune.sample_from(
+        lambda spec: 32 if spec.config["netB_hidden_dim"] >= 64 else 16
+    ),
+
+
+    "netA_hidden_dim": tune.choice([32, 64]),
+    "netB_hidden_dim": tune.choice([32, 64, 128]),
     "pooling_type": tune.choice(["sum", "mean"]),
     "netA_hidden_layers": tune.choice([1, 2, 3]),
-    "netB_hidden_layers": tune.choice([1, 2, 3]),
+    "netB_hidden_layers": tune.choice([2, 3]),
+    "lambda_sym": tune.loguniform(1e-4, 1e-1)
+
 }
 
 ray_storage_path = "/shared/ray_results"
@@ -42,7 +48,7 @@ tuner = tune.Tuner(
         {"cpu": 1, "gpu": 1./50.}  # adjust CPU/GPU numbers as needed
     ),
     param_space=search_space,
-    tune_config=tune.TuneConfig(metric="val_loss", mode="min", num_samples=92),
+    tune_config=tune.TuneConfig(metric="val_loss", mode="min", num_samples=1000),
     run_config=run_config,
 )
 
